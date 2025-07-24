@@ -1,0 +1,4 @@
+.env
+openai_apikey.txt
+groq_imgapi.txt
+publisher/node_modules

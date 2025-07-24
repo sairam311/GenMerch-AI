@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mockup Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      max-width: 500px;
+      margin-bottom: 10px;
+    }
+    pre {
+      text-align: left;
+      background: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      display: inline-block;
+      max-width: 90%;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h2> Ecommerce product Mockup Visualizer</h2>
+  <canvas id="mockupCanvas" width="1024" height="1024"></canvas>
+  <h3>📦 Product Details</h3>
+  <pre id="productJson">Loading...</pre>
+
+  <script>
+    const canvas = document.getElementById("mockupCanvas");
+    const ctx = canvas.getContext("2d");
+    const jsonDisplay = document.getElementById("productJson");
+
+    const cartTemplate = new Image();
+    const productImage = new Image();
+
+    cartTemplate.src = "/assets/cart_template.jpg";
+    productImage.src = "/orchestrator/product_image.png";
+
+    let templateLoaded = false;
+    let productImageExists = false;
+
+    function drawTemplateOnly() {
+      ctx.drawImage(cartTemplate, 0, 0, canvas.width, canvas.height);
+    }
+
+    function drawWithProductImage() {
+   //   ctx.drawImage(cartTemplate, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(productImage, 0, 0, canvas.width, canvas.height);
+    }
+
+    cartTemplate.onload = () => {
+      templateLoaded = true;
+
+      // Try to load product image
+      productImage.onload = () => {
+        productImageExists = true;
+        drawWithProductImage();
+      };
+
+      productImage.onerror = () => {
+        console.warn("No product image found. Displaying template only.");
+        drawTemplateOnly();
+      };
+    };
+
+    // Fetch and display product JSON
+    fetch("/orchestrator/product_info.json")
+      .then(res => res.json())
+      .then(data => {
+        jsonDisplay.textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        jsonDisplay.textContent = "No product available.";
+        console.error("JSON load failed:", err);
+      });
+  </script>
+</body>
+</html>
