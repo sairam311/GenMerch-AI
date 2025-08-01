@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mockup Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ea66e6 0%, #6cbd4b 100%);
+      height: 100vh;
+      padding: 1rem;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      height: calc(100vh - 2rem);
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      padding: 1.5rem;
+      align-items: start;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .canvas-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      max-height: calc(100vh - 250px);
+    }
+
+    .canvas-wrapper:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      border: none;
+    }
+
+    .canvas-label {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .details-section {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    .section-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .emoji {
+      font-size: 1.5rem;
+    }
+
+    .json-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .json-header {
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+      color: white;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .json-header::before {
+      content: '{ }';
+      font-family: 'Monaco', 'Menlo', monospace;
+      opacity: 0.7;
+    }
+
+    pre {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 1rem;
+      margin: 0;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #334155;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-y: auto;
+      border: none;
+      flex: 1;
+      min-height: 0;
+    }
+
+    pre::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    pre::-webkit-scrollbar-track {
+      background: #e2e8f0;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .loading-state {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e5e7eb;
+      border-top: 2px solid #4f46e5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .status-indicator {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
+      }
+
+      .header .subtitle {
+        font-size: 0.8rem;
+      }
+
+      .header {
+        padding: 1rem;
+      }
+
+      pre {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+      }
+
+      .canvas-wrapper {
+        max-height: calc(50vh - 100px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 0.75rem;
+      }
+
+      .header {
+        padding: 0.75rem;
+      }
+
+      .header h2 {
+        font-size: 1.25rem;
+      }
+
+      .canvas-wrapper {
+        max-height: calc(40vh - 80px);
+      }
+    }
+
+    /* Enhance JSON syntax highlighting */
+    pre {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Ecommerce Product Mockup Visualizer</h2>
+      <div class="subtitle">Generate stunning product mockups with ease</div>
+    </div>
+
+    <div class="content">
+      <div class="canvas-section">
+        <div class="canvas-wrapper">
+          <canvas id="mockupCanvas" width="1024" height="1024"></canvas>
+          <div class="status-indicator"></div>
+        </div>
+        <div class="canvas-label">Product Mockup Preview</div>
+      </div>
+
+      <div class="details-section">
+        <div class="section-header">
+          <span class="emoji">📦</span>
+          <h3>Product Details</h3>
+        </div>
+        
+        <div class="json-container">
+          <div class="json-header">
+            JSON Configuration
+          </div>
+          <pre id="productJson"><div class="loading-state"><div class="loading-spinner"></div>Loading product data...</div></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mockupCanvas");
+    const ctx = canvas.getContext("2d");
+    const jsonDisplay = document.getElementById("productJson");
+
+    const cartTemplate = new Image();
+    const productImage = new Image();
+
+    cartTemplate.src = "/assets/cart_template.jpg";
+    productImage.src = "/orchestrator/product_image.png";
+
+    let templateLoaded = false;
+    let productImageExists = false;
+
+    function drawTemplateOnly() {
+      ctx.drawImage(cartTemplate, 0, 0, canvas.width, canvas.height);
+    }
+
+    function drawWithProductImage() {
+   //   ctx.drawImage(cartTemplate, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(productImage, 0, 0, canvas.width, canvas.height);
+    }
+
+    cartTemplate.onload = () => {
+      templateLoaded = true;
+
+      // Try to load product image
+      productImage.onload = () => {
+        productImageExists = true;
+        drawWithProductImage();
+      };
+
+      productImage.onerror = () => {
+        console.warn("No product image found. Displaying template only.");
+        drawTemplateOnly();
+      };
+    };
+
+    cartTemplate.onerror = () => {
+      console.warn("Template image not found. Drawing placeholder.");
+      // Draw a placeholder rectangle
+      ctx.fillStyle = '#f3f4f6';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '48px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Mockup Preview', canvas.width/2, canvas.height/2);
+      ctx.font = '24px sans-serif';
+      ctx.fillText('Template image not available', canvas.width/2, canvas.height/2 + 60);
+    };
+
+    // Fetch and display product JSON
+    fetch("/orchestrator/product_info.json")
+      .then(res => res.json())
+      .then(data => {
+        jsonDisplay.textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        jsonDisplay.textContent = "No product available.";
+        console.error("JSON load failed:", err);
+      });
+  </script>
+</body>
+</html>
