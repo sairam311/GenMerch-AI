@@ -344,8 +344,8 @@
     const cartTemplate = new Image();
     const productImage = new Image();
 
-    cartTemplate.src = "../assets/cart_template.jpg";
-    productImage.src = "../orchestrator/product_image.png";
+    cartTemplate.src = "https://raw.githubusercontent.com/sairam311/GenMerch-AI/preview/assets/cart_template.jpg";
+    productImage.src = "https://raw.githubusercontent.com/sairam311/GenMerch-AI/preview/orchestrator/product_image.png";
 
     let templateLoaded = false;
     let productImageExists = false;
@@ -388,7 +388,7 @@
     };
 
     // Fetch and display product JSON
-    fetch("../orchestrator/product_info.json")
+    fetch("https://raw.githubusercontent.com/sairam311/GenMerch-AI/preview/orchestrator/product_info.json")
       .then(res => res.json())
       .then(data => {
         jsonDisplay.textContent = JSON.stringify(data, null, 2);
