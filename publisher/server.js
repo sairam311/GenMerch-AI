@@ -6,16 +6,40 @@ const PORT = 4000;
 app.use(bodyParser.json());
 
 app.post('/publish', (req, res) => {
-  console.log(" New product received:", req.body);
+  try {
+    console.log("New product received:", req.body);
 
-  const fakeId = "FAKE_" + Math.floor(Math.random() * 1000000);
-  const response = {
-    status: "success",
-    published_id: fakeId,
-    timestamp: new Date().toISOString()
-  };
+    // Check for missing required parameters
+    if (!req.body.title) {
+      return res.status(400).json({
+        status: "error",
+        message: "Missing required parameter: title"
+      });
+    }
 
-  res.json(response);
+    if (!req.body.description) {
+      return res.status(400).json({
+        status: "error",
+        message: "Missing required parameter: description"
+      });
+    }
+
+    const fakeId = "FAKE_" + Math.floor(Math.random() * 1000000);
+    const response = {
+      status: "success",
+      published_id: fakeId,
+      timestamp: new Date().toISOString()
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error("Error processing request:", error.message);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to process product publishing request",
+      error: error.message
+    });
+  }
 });
 
 app.listen(PORT, () => {
